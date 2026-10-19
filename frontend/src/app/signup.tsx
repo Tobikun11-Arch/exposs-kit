@@ -12,6 +12,13 @@ import {
 import {FormField} from '@/components/auth/form-field';
 import {ThemedText} from '@/components/themed-text';
 import {useAuth} from '@/lib/auth-context';
+import {
+  firstError,
+  validateCode,
+  validateEmail,
+  validateNewPassword,
+  validateRequired
+} from '@/lib/validation';
 
 export default function SignUpScreen() {
   const {signUp, verify, resendVerification} = useAuth();
@@ -29,6 +36,18 @@ export default function SignUpScreen() {
   const [notice, setNotice] = useState('');
 
   async function onSignUp() {
+    const validationError = firstError(
+      validateRequired(firstName, 'First name'),
+      validateRequired(lastName, 'Last name'),
+      validateRequired(username, 'Username'),
+      validateEmail(email),
+      validateNewPassword(password)
+    );
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     setError('');
     setLoading(true);
     try {
@@ -49,6 +68,12 @@ export default function SignUpScreen() {
   }
 
   async function onVerify() {
+    const validationError = validateCode(code);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     setError('');
     setLoading(true);
     try {
@@ -91,7 +116,7 @@ export default function SignUpScreen() {
         <View style={styles.header}>
           <BrandHeader
             title="Create account"
-            subtitle="Join <App name> and get started."
+            subtitle="Join Exposs-kit and get started."
           />
         </View>
       ) : (
@@ -166,7 +191,10 @@ export default function SignUpScreen() {
             value={code}
             onChangeText={setCode}
             placeholder="6-digit code"
-            keyboardType="email-address"
+            keyboardType="number-pad"
+            autoComplete="one-time-code"
+            textContentType="oneTimeCode"
+            maxLength={6}
           />
           <FormError message={error} />
           <PrimaryButton

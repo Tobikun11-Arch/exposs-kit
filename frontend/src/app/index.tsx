@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Text, View, StyleSheet} from 'react-native';
+import {Pressable, Text, View, StyleSheet} from 'react-native';
 
 import {
   AuthLayout,
@@ -11,6 +11,7 @@ import {
 import {FormField} from '@/components/auth/form-field';
 import {ThemedText} from '@/components/themed-text';
 import {useAuth} from '@/lib/auth-context';
+import {firstError, validateEmail, validatePassword} from '@/lib/validation';
 
 export default function LoginScreen() {
   const {signIn} = useAuth();
@@ -23,6 +24,14 @@ export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
 
   async function onSubmit() {
+    // Validate locally first so the user never sees a raw server error such as
+    // "String must contain at least 1 character".
+    const validationError = firstError(validateEmail(email), validatePassword(password));
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     setError('');
     setLoading(true);
     try {
@@ -43,15 +52,11 @@ export default function LoginScreen() {
             link="Sign up"
             onPress={goToSignUp}
           />
-          <ThemedText
-            type="small"
-            themeColor="textSecondary"
-            style={styles.forgotLink}
-          >
-            <Text style={styles.forgotLink} onPress={goToForgot}>
+          <Pressable onPress={goToForgot} hitSlop={8}>
+            <ThemedText type="smallBold" style={styles.forgotLink}>
               Forgot password?
-            </Text>
-          </ThemedText>
+            </ThemedText>
+          </Pressable>
         </View>
       }
     >

@@ -12,6 +12,7 @@ import {
 import { FormField } from '@/components/auth/form-field';
 import { ThemedText } from '@/components/themed-text';
 import { useAuth } from '@/lib/auth-context';
+import { validateCode, validateEmail, validateNewPassword } from '@/lib/validation';
 
 type Step = 'email' | 'code' | 'password';
 
@@ -28,6 +29,12 @@ export default function ForgotPasswordScreen() {
   const [notice, setNotice] = useState('');
 
   async function onRequestCode() {
+    const validationError = validateEmail(email);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     setError('');
     setLoading(true);
     try {
@@ -42,6 +49,12 @@ export default function ForgotPasswordScreen() {
   }
 
   async function onVerifyCode() {
+    const validationError = validateCode(code);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     setError('');
     setLoading(true);
     try {
@@ -55,6 +68,12 @@ export default function ForgotPasswordScreen() {
   }
 
   async function onReset() {
+    const validationError = validateNewPassword(newPassword);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     setError('');
     setLoading(true);
     try {
@@ -112,7 +131,10 @@ export default function ForgotPasswordScreen() {
               value={code}
               onChangeText={setCode}
               placeholder="6-digit code"
-              keyboardType="email-address"
+              keyboardType="number-pad"
+              autoComplete="one-time-code"
+              textContentType="oneTimeCode"
+              maxLength={6}
             />
             <FormError message={error} />
             <PrimaryButton label="Verify code" onPress={onVerifyCode} loading={loading} />
