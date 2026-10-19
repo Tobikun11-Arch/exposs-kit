@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { TextInput, View, type TextInputProps } from 'react-native';
 
 import { useAuthFieldScroll } from '@/components/auth/auth-screen';
@@ -38,6 +38,15 @@ export function FormField({
   const rootRef = useRef<View>(null);
   const scrollFieldIntoView = useAuthFieldScroll();
 
+  // Android re-applies the password mask every time a controlled `value` is pushed
+  // back into a secure field, so the character being typed flickers (blinks once
+  // before it settles as a bullet). That is facebook/react-native#53696.
+  // A secure field owns its own text instead: we capture the initial value once and
+  // never send it back, while the parent still receives every keystroke through
+  // `onChangeText` and keeps the value in state for validation and submission.
+  const [initialValue] = useState(value);
+  const valueProps = secureTextEntry ? { defaultValue: initialValue } : { value };
+
   return (
     <View ref={rootRef} className="gap-1.5">
       <ThemedText type="smallBold">{label}</ThemedText>
@@ -50,11 +59,13 @@ export function FormField({
         }}
         placeholder={placeholder}
         placeholderTextColor={theme.textSecondary}
-        value={value}
+        {...valueProps}
         onChangeText={onChangeText}
         onFocus={() => scrollFieldIntoView(rootRef.current)}
         secureTextEntry={secureTextEntry}
         autoCapitalize={autoCapitalize}
+        autoCorrect={secureTextEntry ? false : undefined}
+        spellCheck={secureTextEntry ? false : undefined}
         keyboardType={keyboardType}
         autoComplete={autoComplete}
         textContentType={textContentType}
