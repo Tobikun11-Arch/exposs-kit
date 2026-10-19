@@ -88,13 +88,15 @@ export function AuthLayout({
     }
 
     field.measureInWindow((_fieldX, fieldY, _fieldWidth, fieldHeight) => {
-      scroll.measureInWindow((_x, y, _width, height) => {
-        const visibleBottom = y + height - FIELD_MARGIN;
-        const overflow = fieldY + fieldHeight - visibleBottom;
-        if (overflow > 0) {
-          scroll.scrollTo({ y: scrollY.current + overflow, animated: true });
-        }
-      });
+      scroll
+        .getNativeScrollRef()
+        ?.measureInWindow((_x: number, y: number, _width: number, height: number) => {
+          const visibleBottom = y + height - FIELD_MARGIN;
+          const overflow = fieldY + fieldHeight - visibleBottom;
+          if (overflow > 0) {
+            scroll.scrollTo({ y: scrollY.current + overflow, animated: true });
+          }
+        });
     });
   }, []);
 
