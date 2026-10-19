@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import {useState} from 'react';
+import {Text, View, StyleSheet} from 'react-native';
 
 import {
   AuthLayout,
@@ -9,12 +9,12 @@ import {
   PrimaryButton,
   useToAuth
 } from '@/components/auth/auth-screen';
-import { FormField } from '@/components/auth/form-field';
-import { ThemedText } from '@/components/themed-text';
-import { useAuth } from '@/lib/auth-context';
+import {FormField} from '@/components/auth/form-field';
+import {ThemedText} from '@/components/themed-text';
+import {useAuth} from '@/lib/auth-context';
 
 export default function SignUpScreen() {
-  const { signUp, verify, resendVerification } = useAuth();
+  const {signUp, verify, resendVerification} = useAuth();
   const goToLogin = useToAuth('/');
 
   const [step, setStep] = useState<'details' | 'verify'>('details');
@@ -32,7 +32,13 @@ export default function SignUpScreen() {
     setError('');
     setLoading(true);
     try {
-      await signUp({ firstName, lastName, username, email: email.trim(), password });
+      await signUp({
+        firstName,
+        lastName,
+        username,
+        email: email.trim(),
+        password
+      });
       setStep('verify');
       setNotice(`We sent a 6-digit code to ${email.trim()}. Check your inbox.`);
     } catch (err) {
@@ -73,16 +79,27 @@ export default function SignUpScreen() {
     <AuthLayout
       footer={
         step === 'details' ? (
-          <AuthFooterLink prompt="Already have an account?" link="Sign in" onPress={goToLogin} />
+          <AuthFooterLink
+            prompt="Already have an account?"
+            link="Sign in"
+            onPress={goToLogin}
+          />
         ) : undefined
-      }>
+      }
+    >
       {step === 'details' ? (
         <View style={styles.header}>
-          <BrandHeader title="Create account" subtitle="Join Kwek and get started." />
+          <BrandHeader
+            title="Create account"
+            subtitle="Join <App name> and get started."
+          />
         </View>
       ) : (
         <View style={styles.header}>
-          <BrandHeader title="Verify your email" subtitle="Enter the 6-digit code we emailed you." />
+          <BrandHeader
+            title="Verify your email"
+            subtitle="Enter the 6-digit code we emailed you."
+          />
         </View>
       )}
 
@@ -90,24 +107,73 @@ export default function SignUpScreen() {
         <View style={styles.form}>
           <View style={styles.row}>
             <View style={styles.rowItem}>
-              <FormField label="First name" value={firstName} onChangeText={setFirstName} autoCapitalize="words" autoComplete="name" />
+              <FormField
+                label="First name"
+                value={firstName}
+                onChangeText={setFirstName}
+                autoCapitalize="words"
+                autoComplete="name"
+              />
             </View>
             <View style={styles.rowItem}>
-              <FormField label="Last name" value={lastName} onChangeText={setLastName} autoCapitalize="words" autoComplete="name" />
+              <FormField
+                label="Last name"
+                value={lastName}
+                onChangeText={setLastName}
+                autoCapitalize="words"
+                autoComplete="name"
+              />
             </View>
           </View>
-          <FormField label="Username" value={username} onChangeText={setUsername} placeholder="e.g. joenel" autoComplete="username" />
-          <FormField label="Email" value={email} onChangeText={setEmail} placeholder="you@example.com" keyboardType="email-address" autoComplete="email" />
-          <FormField label="Password" value={password} onChangeText={setPassword} placeholder="Min 8 chars, mixed case, number & symbol" secureTextEntry autoComplete="password" returnKeyType="done" />
+          <FormField
+            label="Username"
+            value={username}
+            onChangeText={setUsername}
+            placeholder="e.g. joenel"
+            autoComplete="username"
+          />
+          <FormField
+            label="Email"
+            value={email}
+            onChangeText={setEmail}
+            placeholder="you@example.com"
+            keyboardType="email-address"
+            autoComplete="email"
+          />
+          <FormField
+            label="Password"
+            value={password}
+            onChangeText={setPassword}
+            placeholder="Min 8 chars, mixed case, number & symbol"
+            secureTextEntry
+            autoComplete="password"
+            returnKeyType="done"
+          />
           <FormError message={error} />
-          <PrimaryButton label="Create account" onPress={onSignUp} loading={loading} />
+          <PrimaryButton
+            label="Create account"
+            onPress={onSignUp}
+            loading={loading}
+          />
         </View>
       ) : (
         <View style={styles.form}>
-          <ThemedText type="small" themeColor="textSecondary">{notice}</ThemedText>
-          <FormField label="Verification code" value={code} onChangeText={setCode} placeholder="6-digit code" keyboardType="email-address" />
+          <ThemedText type="small" themeColor="textSecondary">
+            {notice}
+          </ThemedText>
+          <FormField
+            label="Verification code"
+            value={code}
+            onChangeText={setCode}
+            placeholder="6-digit code"
+            keyboardType="email-address"
+          />
           <FormError message={error} />
-          <PrimaryButton label="Verify email" onPress={onVerify} loading={loading} />
+          <PrimaryButton
+            label="Verify email"
+            onPress={onVerify}
+            loading={loading}
+          />
           <Text style={styles.resend} onPress={onResend}>
             Resend code
           </Text>
@@ -118,9 +184,14 @@ export default function SignUpScreen() {
 }
 
 const styles = StyleSheet.create({
-  header: { gap: 0 },
-  form: { gap: 16 },
-  row: { flexDirection: 'row', gap: 12 },
-  rowItem: { flex: 1 },
-  resend: { color: '#3c87f7', textAlign: 'center', fontWeight: '600', alignSelf: 'center' }
+  header: {gap: 0},
+  form: {gap: 16},
+  row: {flexDirection: 'row', gap: 12},
+  rowItem: {flex: 1},
+  resend: {
+    color: '#3c87f7',
+    textAlign: 'center',
+    fontWeight: '600',
+    alignSelf: 'center'
+  }
 });

@@ -60,7 +60,7 @@ export default function LoginScreen() {
           <Text style={styles.logoText}>K</Text>
         </View>
         <ThemedText type="title" style={styles.title}>
-          Kwek
+          Exposs-kit
         </ThemedText>
         <ThemedText themeColor="textSecondary" style={styles.subtitle}>
           Welcome back! Sign in to your account.
